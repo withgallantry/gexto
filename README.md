@@ -1,3 +1,46 @@
+# !! WARNING !!
+This repository forked by "github.com/nerd2/gexto"
+
+This repository extend fs struct. Add List() method.
+
+Below sample.
+``` main.go
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+	"log"
+	"os"
+	"strings"
+
+
+	// go mod replace  "github.com/nerd2/gexto" => "github.com/masahiro331/gexto"
+	"github.com/nerd2/gexto"
+)
+
+func main() {
+	if len(os.Args) < 2 {
+		log.Fatal("required [ext4] argument")
+	}
+
+	fs, _ := gexto.NewFileSystem(os.Args[1])
+	files, _ := fs.List()
+	for _, filename := range files {
+		targetFile := "ANY FILES"
+		if len(os.Args) == 3 {
+			targetFile = os.Args[2]
+		}
+		if strings.Contains(filename, targetFile) {
+			g, _ := fs.Open(filename)
+			b, _ := ioutil.ReadAll(g)
+			fmt.Println(string(b))
+		}
+	}
+}
+```
+
+
 # gexto
 ## EXT2/EXT3/EXT4 Filesystem library for Golang
 
@@ -21,20 +64,20 @@ import (
 
 func main() {
   fs, _ := gexto.NewFileSystem("file.ext4")
-  
+
   f, _ := fs.Create("/test")
   f.Write([]byte("hello world")
   f.Close()
-  
+
   g, _ := fs.Open("/another/file")
   log.Println(ioutil.ReadAll(file))
 }
-```  
+```
 
 #### Testing
 
 Note that testing requires (passwordless) sudo, in order that the test filesystems can be mounted.
-  
+
 
 
 

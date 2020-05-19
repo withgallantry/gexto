@@ -1,10 +1,11 @@
 package gexto
 
 import (
-	"os"
-	"github.com/lunixbochs/struc"
 	"fmt"
+	"os"
 	"syscall"
+
+	"github.com/lunixbochs/struc"
 )
 
 type File struct {
@@ -14,6 +15,7 @@ type File struct {
 type FileSystem interface {
 	Open(name string) (*File, error)
 	Create(name string) (*File, error)
+	List() ([]string, error)
 	Remove(name string) error
 	Mkdir(name string, perm os.FileMode) error
 	Close() error
@@ -32,7 +34,7 @@ func NewFileSystem(devicePath string) (FileSystem, error) {
 	ret.dev = f
 	ret.sb = &Superblock{
 		address: 1024,
-		fs: &ret,
+		fs:      &ret,
 	}
 	err = struc.Unpack(f, ret.sb)
 	if err != nil {
@@ -51,5 +53,3 @@ func NewFileSystem(devicePath string) (FileSystem, error) {
 
 	return &ret, nil
 }
-
-
