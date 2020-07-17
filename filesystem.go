@@ -41,9 +41,8 @@ func (fs *fs) getINodeForPath(path string) (*Inode, error) {
 			return nil, fmt.Errorf("No such file or directory")
 		}
 
-		return inode, nil
 	}
-
+	return inode, nil
 }
 
 func (fs *fs) List(path string, level int) ([]string, error) {
