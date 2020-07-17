@@ -32,6 +32,7 @@ func (fs *fs) getINodeForPath(path string) (*Inode, error) {
 			//log.Println(string(dirContents[i].Name), part, dirContents[i].Flags, dirContents[i].Inode)
 			if string(dirContents[i].Name) == part {
 				found = true
+				log.Println("Found direcotry")
 				inode = fs.getInode(int64(dirContents[i].Inode))
 				break
 			}
@@ -42,6 +43,7 @@ func (fs *fs) getINodeForPath(path string) (*Inode, error) {
 		}
 
 	}
+
 	return inode, nil
 }
 
@@ -60,7 +62,7 @@ func (fs *fs) List(path string, level int) ([]string, error) {
 var DIRECTORY_MODE = uint16(16877)
 
 func (fs *fs) walk(path string, inode *Inode, files []string, level int, curLevel int) []string {
-	if curLevel > level {
+	if curLevel >= level {
 		return files
 	}
 
