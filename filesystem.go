@@ -29,10 +29,9 @@ func (fs *fs) getINodeForPath(path string) (*Inode, error) {
 		dirContents := inode.ReadDirectory()
 		found := false
 		for i := 0; i < len(dirContents); i++ {
-			//log.Println(string(dirContents[i].Name), part, dirContents[i].Flags, dirContents[i].Inode)
+			log.Println(string(dirContents[i].Name), part, dirContents[i].Flags, dirContents[i].Inode)
 			if string(dirContents[i].Name) == part {
 				found = true
-				log.Println("Found direcotry")
 				inode = fs.getInode(int64(dirContents[i].Inode))
 				break
 			}
