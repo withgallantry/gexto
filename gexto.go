@@ -15,7 +15,7 @@ type File struct {
 type FileSystem interface {
 	Open(name string) (*File, error)
 	Create(name string) (*File, error)
-	List() ([]string, error)
+	List(path string, level int) ([]string, error)
 	Remove(name string) error
 	Mkdir(name string, perm os.FileMode) error
 	Close() error
