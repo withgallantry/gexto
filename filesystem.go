@@ -22,7 +22,7 @@ func (fs *fs) getINodeForPath(path string) (*Inode, error) {
 	inode := fs.getInode(int64(ROOT_INO))
 	for _, part := range parts[:len(parts)-1] {
 		println("part")
-		printlin(part)
+		println(part)
 		if len(part) == 0 {
 			continue
 		}
