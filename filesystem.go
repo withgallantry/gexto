@@ -16,18 +16,22 @@ type fs struct {
 	dev *os.File
 }
 
-func (fs *fs) List() ([]string, error) {
+func (fs *fs) List(path string, level int) ([]string, error) {
 	inodeNum := int64(ROOT_INO)
 	inode := fs.getInode(inodeNum)
 
-	files := fs.walk("", inode, []string{})
+	files := fs.walk("", inode, []string{}, level, 0)
 
 	return files, nil
 }
 
 var DIRECTORY_MODE = uint16(16877)
 
-func (fs *fs) walk(path string, inode *Inode, files []string) []string {
+func (fs *fs) walk(path string, inode *Inode, files []string, level int, curLevel int) []string {
+	if curLevel > level {
+		return files
+	}
+
 	if path == "" {
 		path = "/"
 	}
@@ -49,8 +53,8 @@ func (fs *fs) walk(path string, inode *Inode, files []string) []string {
 		if i.UsesDirectoryHashTree() {
 			continue
 		}
-
-		files = fs.walk(filepath.Join(path, content.Name), i, files)
+		curLevel++
+		files = fs.walk(filepath.Join(path, content.Name), i, files, level, curLevel)
 	}
 
 	return files
