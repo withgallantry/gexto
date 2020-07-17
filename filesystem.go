@@ -16,10 +16,43 @@ type fs struct {
 	dev *os.File
 }
 
+func (fs *fs) getINodeForPath(path string) (*Inode, error) {
+	parts := strings.Split(path, "/")
+
+	inode := fs.getInode(int64(ROOT_INO))
+
+	for _, part := range parts[:len(parts)-1] {
+		if len(part) == 0 {
+			continue
+		}
+
+		dirContents := inode.ReadDirectory()
+		found := false
+		for i := 0; i < len(dirContents); i++ {
+			//log.Println(string(dirContents[i].Name), part, dirContents[i].Flags, dirContents[i].Inode)
+			if string(dirContents[i].Name) == part {
+				found = true
+				inode = fs.getInode(int64(dirContents[i].Inode))
+				break
+			}
+		}
+
+		if !found {
+			return nil, fmt.Errorf("No such file or directory")
+		}
+
+		return inode, nil
+	}
+
+}
+
 func (fs *fs) List(path string, level int) ([]string, error) {
 	inodeNum := int64(ROOT_INO)
 	inode := fs.getInode(inodeNum)
 
+	if path != "" {
+		inode, _ = fs.getINodeForPath(path)
+	}
 	files := fs.walk("", inode, []string{}, level, 0)
 
 	return files, nil
@@ -35,6 +68,7 @@ func (fs *fs) walk(path string, inode *Inode, files []string, level int, curLeve
 	if path == "" {
 		path = "/"
 	}
+
 	// This inode is not directory
 	dirContents := inode.ReadDirectory()
 
