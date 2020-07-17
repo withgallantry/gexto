@@ -52,8 +52,10 @@ func (fs *fs) List(path string, level int) ([]string, error) {
 	inode := fs.getInode(inodeNum)
 
 	if path != "" {
+		log.Println("Path not blank")
 		inode, _ = fs.getINodeForPath(path)
 	}
+	log.Println("List Running")
 	files := fs.walk("", inode, []string{}, level, 0)
 
 	return files, nil
